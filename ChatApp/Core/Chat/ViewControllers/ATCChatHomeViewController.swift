@@ -9,6 +9,7 @@
 import UIKit
 
 class ATCChatHomeViewController: ATCGenericCollectionViewController {
+    
   
   init(configuration: ATCGenericCollectionViewControllerConfiguration,
        selectionBlock: ATCollectionViewSelectionBlock?,
@@ -16,7 +17,9 @@ class ATCChatHomeViewController: ATCGenericCollectionViewController {
     
     super.init(configuration: configuration, selectionBlock: selectionBlock)
     
-    self.title = "TeamChat"
+    self.title = "Chats"
+    
+      
   }
   
   required init?(coder aDecoder: NSCoder) {
@@ -38,23 +41,37 @@ class ATCChatHomeViewController: ATCGenericCollectionViewController {
       scrollEnabled: true,
       uiConfig: uiConfig
     )
+      
+      
     
     let homeVC = ATCChatHomeViewController(configuration: collectionVCConfiguration, selectionBlock: { (navController, object) in
       
-    }, viewer: ATCChatMockStore.users[0])
+    }, viewer: viewer)
     
+      var storiesVC = self.storiesViewController(uiConfig: uiConfig,
+                                                 dataSource: ATCGenericLocalDataSource<ATCUser>(items: ATCRemoteData.friends),
+                                                 viewer: ATCRemoteData.user)
+    
+      
     
     // Configure Stories carousel
-    let storiesVC = self.storiesViewController(uiConfig: uiConfig,
-                                               dataSource: ATCGenericLocalDataSource<ATCUser>(items: ATCChatMockStore.users),
-                                               viewer: viewer)
+    
     let storiesCarousel = ATCCarouselViewModel(title: nil,
                                                viewController: storiesVC,
                                                cellHeight: 105)
     storiesCarousel.parentViewController = homeVC
     
     // Configure list of message threads
-    let threadsVC = ATCChatThreadsViewController.mockThreadsVC(uiConfig: uiConfig, dataSource: threadsDataSource, viewer: viewer)
+      let dataSource = ATCGenericLocalHeteroDataSource(items: ATCRemoteData.threads)
+      
+      
+      print("THREADS: \(threadsDataSource)")
+      
+      let threadsVC = ATCChatThreadsViewController.mockThreadsVC(uiConfig: uiConfig, dataSource: threadsDataSource, viewer: viewer)
+      
+      print("made threads vc")
+      
+      
     let threadsViewModel = ATCViewControllerContainerViewModel(viewController: threadsVC, cellHeight: nil, subcellHeight: 85)
     threadsViewModel.parentViewController = homeVC
     homeVC.use(adapter: ATCViewControllerContainerRowAdapter(), for: "ATCViewControllerContainerViewModel")
@@ -73,15 +90,15 @@ class ATCChatHomeViewController: ATCGenericCollectionViewController {
     layout.minimumInteritemSpacing = 10
     layout.minimumLineSpacing = 10
     let configuration = ATCGenericCollectionViewControllerConfiguration(pullToRefreshEnabled: false,
-                                                                        pullToRefreshTintColor: .white,
-                                                                        collectionViewBackgroundColor: .white,
-                                                                        collectionViewLayout: layout,
-                                                                        collectionPagingEnabled: false,
-                                                                        hideScrollIndicators: true,
-                                                                        hidesNavigationBar: false,
-                                                                        headerNibName: nil,
-                                                                        scrollEnabled: true,
-                                                                        uiConfig: uiConfig)
+        pullToRefreshTintColor: .white,
+        collectionViewBackgroundColor: .white,
+        collectionViewLayout: layout,
+        collectionPagingEnabled: false,
+        hideScrollIndicators: true,
+        hidesNavigationBar: false,
+        headerNibName: nil,
+        scrollEnabled: true,
+        uiConfig: uiConfig)
     let vc = ATCGenericCollectionViewController(configuration: configuration, selectionBlock: ATCChatHomeViewController.storySelectionBlock(viewer: viewer))
     vc.genericDataSource = dataSource
     vc.use(adapter: ATCChatUserStoryAdapter(uiConfig: uiConfig), for: "ATCUser")

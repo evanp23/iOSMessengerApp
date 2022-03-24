@@ -24,6 +24,7 @@ class ATCChatThreadsViewController: ATCGenericCollectionViewController {
   static func mockThreadsVC(uiConfig: ATCUIGenericConfigurationProtocol,
                             dataSource: ATCGenericCollectionViewControllerDataSource,
                             viewer: ATCUser) -> ATCChatThreadsViewController {
+      print("mockTreadsVC")
     let collectionVCConfiguration = ATCGenericCollectionViewControllerConfiguration(
       pullToRefreshEnabled: false,
       pullToRefreshTintColor: .white,
@@ -37,7 +38,12 @@ class ATCChatThreadsViewController: ATCGenericCollectionViewController {
       uiConfig: uiConfig
     )
     
-    let vc = ATCChatThreadsViewController(configuration: collectionVCConfiguration, selectionBlock: ATCChatThreadsViewController.selectionBlock(viewer: viewer), viewer: ATCChatMockStore.users[0])
+      print("mockThreadsVC2")
+      
+    let vc = ATCChatThreadsViewController(configuration: collectionVCConfiguration, selectionBlock: ATCChatThreadsViewController.selectionBlock(viewer: viewer), viewer: viewer)
+      
+      print("mockThreads: \(ATCRemoteData.user.fullName())")
+      print("mockThreads: \(ATCRemoteData.threads)")
     vc.genericDataSource = dataSource
     return vc
   }
@@ -45,10 +51,10 @@ class ATCChatThreadsViewController: ATCGenericCollectionViewController {
   static func selectionBlock(viewer: ATCUser) -> ATCollectionViewSelectionBlock? {
     return { (navController, object) in
       let uiConfig = ATCChatUIConfiguration(primaryColor: UIColor(hexString: "#0084ff"),
-                                            secondaryColor: UIColor(hexString: "#f0f0f0"),
-                                            inputTextViewBgColor: UIColor(hexString: "#f4f4f6"),
-                                            inputTextViewTextColor: .black,
-                                            inputPlaceholderTextColor: UIColor(hexString: "#979797"))
+            secondaryColor: UIColor(hexString: "#f0f0f0"),
+            inputTextViewBgColor: UIColor(hexString: "#f4f4f6"),
+            inputTextViewTextColor: .black,
+            inputPlaceholderTextColor: UIColor(hexString: "#979797"))
       if let lastMessage = object as? ATChatMessage {
         let otherUser = viewer.uid == lastMessage.atcSender.uid ? lastMessage.recipient : lastMessage.atcSender
         let vc = ATCChatThreadViewController(user: viewer, channel: ATCChatChannel(id: lastMessage.channelId, name: otherUser.fullName()), uiConfig: uiConfig)

@@ -167,7 +167,7 @@ class ATCChatThreadViewController: MessagesViewController, MessagesDataSource, I
     }
     
     messages.append(message)
-    messages.sort()
+    messages.sort() //why?
     
     let isLatestMessage = messages.index(of: message) == (messages.count - 1)
     let shouldScrollToBottom = messagesCollectionView.isAtBottom && isLatestMessage
@@ -272,7 +272,7 @@ class ATCChatThreadViewController: MessagesViewController, MessagesDataSource, I
   
   func numberOfMessages(in messagesCollectionView: MessagesCollectionView) -> Int {
     return messages.count
-  }
+  }//???????
   
   func messageForItem(at indexPath: IndexPath,
                       in messagesCollectionView: MessagesCollectionView) -> MessageType {

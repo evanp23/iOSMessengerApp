@@ -7,6 +7,9 @@
 //
 
 import Foundation
+import Firebase
+import FirebaseFirestore
+import MessageKit
 
 open class ATCUser: NSObject, ATCGenericBaseModel {
 
@@ -17,6 +20,15 @@ open class ATCUser: NSObject, ATCGenericBaseModel {
     var lastName: String?
     var profilePictureURL: String?
     var isOnline: Bool
+    
+    public override init() {
+        self.firstName = nil
+        self.lastName = nil
+        self.uid = nil
+        self.email = nil
+        self.profilePictureURL = nil
+        self.isOnline = false
+    }
 
     public init(uid: String = "", firstName: String, lastName: String, avatarURL: String = "", email: String = "", isOnline: Bool = false) {
         self.firstName = firstName
@@ -26,6 +38,7 @@ open class ATCUser: NSObject, ATCGenericBaseModel {
         self.profilePictureURL = avatarURL
         self.isOnline = isOnline
     }
+    
 
     required public init(jsonDict: [String: Any]) {
         fatalError()

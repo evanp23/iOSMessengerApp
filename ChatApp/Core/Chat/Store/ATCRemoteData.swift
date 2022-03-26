@@ -59,6 +59,7 @@ class ATCRemoteData{
                     // Usually a bad thing though, only use to debug and do not release
                     self.getFriends(completion: {
                         for document in querySnapshot!.documents {
+                            let document1 = ATCChatChannel(document: document)
                             //get threads
                             self.db.collection("channels/\(document.get("id")!)/thread").getDocuments() { (querySnapshot, err) in
                                 if let err = err {
@@ -67,19 +68,20 @@ class ATCRemoteData{
                                     if querySnapshot?.documents == nil{
                                         print("no channels or threads found for this user's organization\n. No worries a brand new one will automatically be created when you first attempt to send a message")
                                     }else{
-                                        print(document.get("id"))
                                         if(!querySnapshot!.isEmpty){
                                             let doc = querySnapshot!.documents[0]
                                             let thread: ATChatMessage = ATChatMessage(document: doc)!
                                             ATCRemoteData.threads.append(thread)
                                         }
+                                        completion()
                                     }
                                 }
                             }
+                            
                         }
-                        completion()
-                       
+                        
                     })
+                    
                 }
             }
         }

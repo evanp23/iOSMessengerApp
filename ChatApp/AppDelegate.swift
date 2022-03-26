@@ -34,7 +34,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         
         
-        //let threadsDataSource = ATCGenericFirebaseDataSource<ATCRemoteData>(tableName: "threads")
+        //let threadsDataSource = ATCGenericFirebaseDataSource<ATCChatChannel>(tableName: "threads")
         
         // HEY THERE, user. read the next few lines below
         // Helper file to access remote data for a user
@@ -60,9 +60,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             print("appdelegate got completion")
             print("APPDELEGATE: SELF: \(ATCRemoteData.user.firstName)")
             let newThreadsDataSource = ATCGenericLocalHeteroDataSource(items: ATCRemoteData.threads)
+            
             self.window?.rootViewController = ChatHostViewController(uiConfig: config,
                                                                 threadsDataSource: newThreadsDataSource,
-                                                                viewer: ATCRemoteData.user)
+                                                                     viewer: ATCRemoteData.user)
         })
         
         let loading = LoadingHome()

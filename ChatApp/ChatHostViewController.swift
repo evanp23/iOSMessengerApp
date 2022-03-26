@@ -14,6 +14,7 @@ class ChatHostViewController: UIViewController, UITabBarControllerDelegate {
 
     let homeVC: UIViewController
     let uiConfig: ATCUIGenericConfigurationProtocol
+    let contactsVC: UIViewController
     
 
     init(uiConfig: ATCUIGenericConfigurationProtocol,
@@ -23,6 +24,7 @@ class ChatHostViewController: UIViewController, UITabBarControllerDelegate {
         
         self.uiConfig = uiConfig
         self.homeVC = ATCChatHomeViewController.homeVC(uiConfig: uiConfig, threadsDataSource: threadsDataSource, viewer: viewer)
+        self.contactsVC = ContactsViewController(message: "Contacts will show here.")
         
         print("Viewer: \(viewer.firstName)")
         super.init(nibName: nil, bundle: nil)
@@ -34,9 +36,14 @@ class ChatHostViewController: UIViewController, UITabBarControllerDelegate {
 
     lazy var hostController: ATCHostViewController = { [unowned self] in
         let menuItems: [ATCNavigationItem] = [
+            ATCNavigationItem(title: "Contacts",
+              viewController: contactsVC,
+              image: UIImage.localImage("customers-icon", template: true),
+              type: .viewController,
+              leftTopView: nil,
+              rightTopView: nil),
             
-            
-            ATCNavigationItem(title: "mon",
+            ATCNavigationItem(title: "Chats",
               viewController: homeVC,
               image: UIImage.localImage("bubbles-icon", template: true),
               type: .viewController,

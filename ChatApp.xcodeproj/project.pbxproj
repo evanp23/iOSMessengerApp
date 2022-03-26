@@ -105,6 +105,7 @@
 		17E7FC1E2148C9A600C896C6 /* UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E7FC1D2148C9A600C896C6 /* UIImage.swift */; };
 		17E7FC202148C9E900C896C6 /* UIScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E7FC1F2148C9E800C896C6 /* UIScrollView.swift */; };
 		20326B2127E7885A00883E6F /* LoadingHome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20326B2027E7885A00883E6F /* LoadingHome.swift */; };
+		205DF2C827EE888200CBFD4A /* ContactsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205DF2C727EE888100CBFD4A /* ContactsViewController.swift */; };
 		2064DFC927B31C8700B17F4F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2064DFC827B31C8700B17F4F /* GoogleService-Info.plist */; };
 		2AF1AC1E7033E8282532FB3F /* Pods_ChatApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 98920945FDBDABCFBD182CF5 /* Pods_ChatApp.framework */; };
 		376585B92243223D00EEB2EC /* ATCRemoteData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 376585B82243223D00EEB2EC /* ATCRemoteData.swift */; };
@@ -212,6 +213,7 @@
 		17E7FC1D2148C9A600C896C6 /* UIImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIImage.swift; sourceTree = "<group>"; };
 		17E7FC1F2148C9E800C896C6 /* UIScrollView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIScrollView.swift; sourceTree = "<group>"; };
 		20326B2027E7885A00883E6F /* LoadingHome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingHome.swift; sourceTree = "<group>"; };
+		205DF2C727EE888100CBFD4A /* ContactsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsViewController.swift; sourceTree = "<group>"; };
 		2064DFC827B31C8700B17F4F /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		376585B82243223D00EEB2EC /* ATCRemoteData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ATCRemoteData.swift; sourceTree = "<group>"; };
 		98920945FDBDABCFBD182CF5 /* Pods_ChatApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ChatApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -317,6 +319,7 @@
 				17A2B6BB2148C1AA0071D01F /* ATCChatHomeViewController.swift */,
 				17A2B6BC2148C1AA0071D01F /* ATCChatThreadsViewController.swift */,
 				20326B2027E7885A00883E6F /* LoadingHome.swift */,
+				205DF2C727EE888100CBFD4A /* ContactsViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -705,6 +708,7 @@
 				17A2B97B2148C1AE0071D01F /* ConstraintMakerPriortizable.swift in Sources */,
 				17A2B9562148C1AE0071D01F /* ATCGenericLocalDataSource.swift in Sources */,
 				17A2B9282148C1AD0071D01F /* ATCMessengerUserCollectionViewCell.swift in Sources */,
+				205DF2C827EE888200CBFD4A /* ContactsViewController.swift in Sources */,
 				17A2B97D2148C1AE0071D01F /* ConstraintViewDSL.swift in Sources */,
 				17A2B8C52148C1AD0071D01F /* ATCCarouselAdapter.swift in Sources */,
 				17A2B9822148C1AE0071D01F /* ConstraintMakerExtendable.swift in Sources */,

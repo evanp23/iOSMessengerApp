@@ -21,10 +21,36 @@ class ChatHostViewController: UIViewController, UITabBarControllerDelegate {
          threadsDataSource: ATCGenericCollectionViewControllerDataSource,
          viewer: ATCUser) {
         
+        let friendsDataSource = ATCGenericLocalHeteroDataSource(items: ATCRemoteData.friends)
+
+        
         
         self.uiConfig = uiConfig
         self.homeVC = ATCChatHomeViewController.homeVC(uiConfig: uiConfig, threadsDataSource: threadsDataSource, viewer: viewer)
-        self.contactsVC = ContactsViewController(message: "Contacts will show here.")
+        
+        let collectionVCConfiguration = ATCGenericCollectionViewControllerConfiguration(
+          pullToRefreshEnabled: false,
+          pullToRefreshTintColor: .gray,
+          collectionViewBackgroundColor: .white,
+          collectionViewLayout: ATCLiquidCollectionViewLayout(),
+          collectionPagingEnabled: false,
+          hideScrollIndicators: false,
+          hidesNavigationBar: false,
+          headerNibName: nil,
+          scrollEnabled: true,
+          uiConfig: uiConfig
+        )
+        
+        
+        self.contactsVC = ContactsViewController.contactsVC(uiConfig: uiConfig, friendsDataSource: friendsDataSource)
+        
+        let threadsVC = ATCChatThreadsViewController.mockThreadsVC(uiConfig: uiConfig, dataSource: threadsDataSource, viewer: viewer)
+        
+        print("made threads vc")
+        
+        
+      let contactViewModel = ATCViewControllerContainerViewModel(viewController: contactsVC, cellHeight: nil, subcellHeight: 85)
+      contactViewModel.parentViewController = homeVC
         
         print("Viewer: \(viewer.firstName)")
         super.init(nibName: nil, bundle: nil)

@@ -106,6 +106,9 @@
 		17E7FC202148C9E900C896C6 /* UIScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E7FC1F2148C9E800C896C6 /* UIScrollView.swift */; };
 		20326B2127E7885A00883E6F /* LoadingHome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20326B2027E7885A00883E6F /* LoadingHome.swift */; };
 		205DF2C827EE888200CBFD4A /* ContactsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205DF2C727EE888100CBFD4A /* ContactsViewController.swift */; };
+		205DF2CA27F10FFA00CBFD4A /* ContactViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205DF2C927F10FF900CBFD4A /* ContactViewController.swift */; };
+		205DF2CC27F206C000CBFD4A /* ATCContactsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205DF2CB27F206C000CBFD4A /* ATCContactsViewController.swift */; };
+		205DF2CE27F2894E00CBFD4A /* ContactAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205DF2CD27F2894E00CBFD4A /* ContactAdapter.swift */; };
 		2064DFC927B31C8700B17F4F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2064DFC827B31C8700B17F4F /* GoogleService-Info.plist */; };
 		2AF1AC1E7033E8282532FB3F /* Pods_ChatApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 98920945FDBDABCFBD182CF5 /* Pods_ChatApp.framework */; };
 		376585B92243223D00EEB2EC /* ATCRemoteData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 376585B82243223D00EEB2EC /* ATCRemoteData.swift */; };
@@ -214,6 +217,9 @@
 		17E7FC1F2148C9E800C896C6 /* UIScrollView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIScrollView.swift; sourceTree = "<group>"; };
 		20326B2027E7885A00883E6F /* LoadingHome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingHome.swift; sourceTree = "<group>"; };
 		205DF2C727EE888100CBFD4A /* ContactsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsViewController.swift; sourceTree = "<group>"; };
+		205DF2C927F10FF900CBFD4A /* ContactViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactViewController.swift; sourceTree = "<group>"; };
+		205DF2CB27F206C000CBFD4A /* ATCContactsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ATCContactsViewController.swift; sourceTree = "<group>"; };
+		205DF2CD27F2894E00CBFD4A /* ContactAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactAdapter.swift; sourceTree = "<group>"; };
 		2064DFC827B31C8700B17F4F /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		376585B82243223D00EEB2EC /* ATCRemoteData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ATCRemoteData.swift; sourceTree = "<group>"; };
 		98920945FDBDABCFBD182CF5 /* Pods_ChatApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ChatApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -308,6 +314,7 @@
 			children = (
 				17A2B6B62148C1A90071D01F /* ATCChatUserStoryAdapter.swift */,
 				17A2B6B72148C1A90071D01F /* ATCChatThreadAdapter.swift */,
+				205DF2CD27F2894E00CBFD4A /* ContactAdapter.swift */,
 			);
 			path = Adapters;
 			sourceTree = "<group>";
@@ -320,6 +327,8 @@
 				17A2B6BC2148C1AA0071D01F /* ATCChatThreadsViewController.swift */,
 				20326B2027E7885A00883E6F /* LoadingHome.swift */,
 				205DF2C727EE888100CBFD4A /* ContactsViewController.swift */,
+				205DF2C927F10FF900CBFD4A /* ContactViewController.swift */,
+				205DF2CB27F206C000CBFD4A /* ATCContactsViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -693,10 +702,12 @@
 				17A2B8DB2148C1AD0071D01F /* ATCLiquidCollectionViewLayout.swift in Sources */,
 				17A2B9992148C1AE0071D01F /* ConstraintMakerRelatable.swift in Sources */,
 				17A2B98A2148C1AE0071D01F /* ConstraintConstantTarget.swift in Sources */,
+				205DF2CA27F10FFA00CBFD4A /* ContactViewController.swift in Sources */,
 				17A2B9892148C1AE0071D01F /* ConstraintLayoutSupport.swift in Sources */,
 				17A2B9912148C1AE0071D01F /* ConstraintItem.swift in Sources */,
 				17A2B97F2148C1AE0071D01F /* ConstraintInsets.swift in Sources */,
 				17A2B8752148C1AC0071D01F /* ATCUserStoryCollectionViewCell.swift in Sources */,
+				205DF2CE27F2894E00CBFD4A /* ContactAdapter.swift in Sources */,
 				17A2B98D2148C1AE0071D01F /* ConstraintMaker.swift in Sources */,
 				17A2B98E2148C1AE0071D01F /* ConstraintRelation.swift in Sources */,
 				17A2B88F2148C1AD0071D01F /* UITextField.swift in Sources */,
@@ -737,6 +748,7 @@
 				17A2B9932148C1AE0071D01F /* Debugging.swift in Sources */,
 				17A2B8842148C1AC0071D01F /* ATCViewControllerContainerViewModel.swift in Sources */,
 				17A2B86A2148C1AC0071D01F /* ATCChatChannel.swift in Sources */,
+				205DF2CC27F206C000CBFD4A /* ATCContactsViewController.swift in Sources */,
 				17A2B86B2148C1AC0071D01F /* ATChatMessage.swift in Sources */,
 				17A2B88C2148C1AC0071D01F /* Date.swift in Sources */,
 				17A2B9792148C1AE0071D01F /* LayoutConstraintItem.swift in Sources */,

@@ -100,6 +100,7 @@ class ChatHostViewController: UIViewController, UITabBarControllerDelegate {
         super.viewDidLoad()
         self.addChildViewControllerWithView(hostController)
         hostController.view.backgroundColor = uiConfig.mainThemeBackgroundColor
+        
     }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {

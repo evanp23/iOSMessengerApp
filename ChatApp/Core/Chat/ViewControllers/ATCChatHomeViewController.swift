@@ -9,7 +9,6 @@
 import UIKit
 
 class ATCChatHomeViewController: ATCGenericCollectionViewController {
-    
   
   init(configuration: ATCGenericCollectionViewControllerConfiguration,
        selectionBlock: ATCollectionViewSelectionBlock?,
@@ -62,22 +61,23 @@ class ATCChatHomeViewController: ATCGenericCollectionViewController {
     storiesCarousel.parentViewController = homeVC
     
     // Configure list of message threads
-      let dataSource = ATCGenericLocalHeteroDataSource(items: ATCRemoteData.threads)
+//      let dataSource = ATCGenericLocalDataSource(items: ATCRemoteData.threads)
       
       
       print("THREADS: \(threadsDataSource)")
       
-      let threadsVC = ATCChatThreadsViewController.mockThreadsVC(uiConfig: uiConfig, dataSource: threadsDataSource, viewer: viewer)
+      let threadsVC = ATCChatThreadsViewController.mockThreadsVC(uiConfig: uiConfig, dataSource: ATCGenericLocalDataSource(items: ATCRemoteData.threads), viewer: viewer)
       
       print("made threads vc")
       
       
-    let threadsViewModel = ATCViewControllerContainerViewModel(viewController: threadsVC, cellHeight: nil, subcellHeight: 85)
+      let threadsViewModel = ATCViewControllerContainerViewModel(viewController: threadsVC, cellHeight: nil, subcellHeight: 85)
     threadsViewModel.parentViewController = homeVC
     homeVC.use(adapter: ATCViewControllerContainerRowAdapter(), for: "ATCViewControllerContainerViewModel")
     
     // Finish home VC configuration
     homeVC.genericDataSource = ATCGenericLocalHeteroDataSource(items: [storiesCarousel, threadsViewModel])
+      
     return homeVC
   }
   

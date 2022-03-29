@@ -16,6 +16,7 @@ class ATCRemoteData{
     static var threads: [ATChatMessage] = []
     static var friends: [ATCUser] = []
     static var user: ATCUser = ATCUser()
+    static var channels: [ATCChatChannel] = []
     
     func getSelf(completion: @escaping () -> Void){
         
@@ -59,19 +60,25 @@ class ATCRemoteData{
                     // Usually a bad thing though, only use to debug and do not release
                     self.getFriends(completion: {
                         for document in querySnapshot!.documents {
-                            let document1 = ATCChatChannel(document: document)
+                            let channel = ATCChatChannel(document: document)
+                            ATCRemoteData.channels.append(channel!)
                             //get threads
-                            self.db.collection("channels/\(document.get("id")!)/thread").getDocuments() { (querySnapshot, err) in
+                            print(document.get("id"))
+                            self.db.collection("channels/\(document.get("id")!)/thread").getDocuments() { (otherSnapshot, err) in
                                 if let err = err {
                                     print("Firebase returned an error while getting chat documents: \(err)")
                                 } else {
-                                    if querySnapshot?.documents == nil{
+                                    if otherSnapshot?.documents == nil{
                                         print("no channels or threads found for this user's organization\n. No worries a brand new one will automatically be created when you first attempt to send a message")
                                     }else{
-                                        if(!querySnapshot!.isEmpty){
-                                            let doc = querySnapshot!.documents[0]
+                                        if(otherSnapshot!.isEmpty){
+                                        }
+                                        if(!otherSnapshot!.isEmpty){
+                                            let doc = otherSnapshot!.documents[0]
                                             let thread: ATChatMessage = ATChatMessage(document: doc)!
                                             ATCRemoteData.threads.append(thread)
+                                            
+                                            print(thread.sender)
                                         }
                                         completion()
                                     }
@@ -79,7 +86,6 @@ class ATCRemoteData{
                             }
                             
                         }
-                        
                     })
                     
                 }

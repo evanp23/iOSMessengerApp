@@ -22,7 +22,7 @@ class ContactsViewController : ATCGenericCollectionViewController{
         let collectionVCConfiguration = ATCGenericCollectionViewControllerConfiguration(pullToRefreshEnabled: false, pullToRefreshTintColor: uiConfig.mainThemeBackgroundColor, collectionViewBackgroundColor: uiConfig.mainThemeBackgroundColor, collectionViewLayout: ATCLiquidCollectionViewLayout(), collectionPagingEnabled: false, hideScrollIndicators: false, hidesNavigationBar: false, headerNibName: nil, scrollEnabled: true, uiConfig: uiConfig)
         
         
-        let vc = ContactsViewController(configuration: collectionVCConfiguration, uiConfig: uiConfig, selectionBlock: {(navController, object) in}, dataSource: friendsDataSource)
+        let vc = ContactsViewController(configuration: collectionVCConfiguration, uiConfig: uiConfig, selectionBlock: ContactsViewController.contactSelectionBlock(uiConfig: uiConfig), dataSource: friendsDataSource)
         
         vc.genericDataSource = friendsDataSource
         return vc
@@ -34,12 +34,19 @@ class ContactsViewController : ATCGenericCollectionViewController{
         print("hello")
     }
     
-    func contactSelectionBlock(uiConfig: ATCUIGenericConfigurationProtocol) -> ATCollectionViewSelectionBlock{
-        return{[weak self] (navController, object) in
-            guard let  `self` = self else{return}
-            let uiConfig = ATCChatUIConfiguration(primaryColor: UIColor.red, secondaryColor: UIColor.black, inputTextViewBgColor: UIColor.yellow, inputTextViewTextColor: UIColor.gray, inputPlaceholderTextColor: UIColor.blue)
-            let vc = ContactViewController(contactName: "evan")
-            navController?.pushViewController(vc, animated: true)
+    static func contactSelectionBlock(uiConfig: ATCUIGenericConfigurationProtocol) -> ATCollectionViewSelectionBlock{
+        return { (navController, object) in
+          let config = ATCChatUIConfiguration(primaryColor: UIColor(hexString: "#0084ff"),
+                secondaryColor: UIColor(hexString: "#f0f0f0"),
+                inputTextViewBgColor: UIColor(hexString: "#f4f4f6"),
+                inputTextViewTextColor: .black,
+                inputPlaceholderTextColor: UIColor(hexString: "#979797"))
+          if let contact = object as? ATCUser {
+              let vc = ContactViewController(contactName: contact.fullName())
+              navController?.pushViewController(vc, animated: true)
+              print("clicked: \(contact.fullName())")
+              print("ATCREMOTE: \(ATCRemoteData.threads)")
+          }
         }
     }
 }

@@ -59,7 +59,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         remoteData.getSelf(completion: {
             print("appdelegate got completion")
             print("APPDELEGATE: SELF: \(ATCRemoteData.user.firstName)")
-            let newThreadsDataSource = ATCGenericLocalHeteroDataSource(items: ATCRemoteData.threads)
+                        let newThreadsDataSource = ATCGenericLocalHeteroDataSource(items: ATCRemoteData.threads)
             
             self.window?.rootViewController = ChatHostViewController(uiConfig: config,
                                                                 threadsDataSource: newThreadsDataSource,

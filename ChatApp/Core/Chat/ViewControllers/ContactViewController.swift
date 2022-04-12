@@ -11,10 +11,18 @@ import UIKit
 
 class ContactViewController : UIViewController{
     let label = UILabel()
-    let contactName : String
+    let contact: ATCUser
     
-    init(contactName : String){
-        self.contactName = contactName
+    private let contactImg: UIImageView = {
+        let contactImg = UIImageView()
+        contactImg.contentMode = .scaleAspectFill
+        contactImg.backgroundColor = .white
+        return contactImg
+    }()
+    
+    init(contact: ATCUser){
+        self.contact = contact
+        
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -24,10 +32,32 @@ class ContactViewController : UIViewController{
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setContactImg()
+        view.addSubview(contactImg)
+        contactImg.frame = CGRect(x: view.center.x / 2, y: view.center.y / 3, width: 200, height: 200)
+//        contactImg.layer.borderWidth = 1.0
+        contactImg.layer.masksToBounds = false
+        contactImg.layer.borderColor = UIColor.black.cgColor
+        contactImg.layer.cornerRadius = contactImg.frame.size.width/2
+        contactImg.clipsToBounds = true
         
-        label.frame = CGRect(x: 0, y: 0, width: 250, height: 100)
-        label.text = self.contactName
+//        contactImg.center = view.center
+        label.text = self.contact.fullName()
+        let textPos = view.center.x
+        
+        label.frame = CGRect(x: view.center.x, y: view.center.y, width: 250, height: 100)
+        
         self.view.addSubview(label)
         
+    }
+    
+    func setContactImg(){
+        guard let urlString = self.contact.profilePictureURL else { return }
+        let url = URL(string: urlString)!
+        
+        guard let data = try? Data(contentsOf: url) else{
+            return
+        }
+        contactImg.image = UIImage(data: data)
     }
 }

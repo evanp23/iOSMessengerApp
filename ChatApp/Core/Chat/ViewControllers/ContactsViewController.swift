@@ -42,7 +42,7 @@ class ContactsViewController : ATCGenericCollectionViewController{
                 inputTextViewTextColor: .black,
                 inputPlaceholderTextColor: UIColor(hexString: "#979797"))
           if let contact = object as? ATCUser {
-              let vc = ContactViewController(contactName: contact.fullName())
+              let vc = ContactViewController(contact: contact)
               navController?.pushViewController(vc, animated: true)
               print("clicked: \(contact.fullName())")
               print("ATCREMOTE: \(ATCRemoteData.threads)")

@@ -21,6 +21,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         config.configureUI()
         
         
+        let data = ConfigHelper.readConfig()
+        if(data == nil){
+            print("Data is nil")
+        }
+        else{
+            ConfigHelper.parse(jsonData: data!)
+        }
+        
+        
 
         FirebaseApp.configure()
         let remoteData = ATCRemoteData()

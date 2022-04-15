@@ -9,13 +9,14 @@
 import FirebaseFirestore
 
 struct ATCChatChannel {
-
     let id: String
     let name: String
+//    let participants: [ATCUser]
 
     init(id: String, name: String) {
         self.id = id
         self.name = name
+//        self.participants = usersExceptCurrent
     }
 
     init?(document: QueryDocumentSnapshot) {
@@ -27,6 +28,7 @@ struct ATCChatChannel {
 
         id = document.documentID
         self.name = name
+//        self.participants = nil
     }
 }
 

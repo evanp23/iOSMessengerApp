@@ -42,6 +42,7 @@ class ATCChatThreadsViewController: ATCGenericCollectionViewController {
       
     let vc = ATCChatThreadsViewController(configuration: collectionVCConfiguration, selectionBlock: ATCChatThreadsViewController.selectionBlock(viewer: viewer), viewer: viewer)
       
+      print("mockThreads: \(viewer.fullName())")
       print("mockThreads: \(ATCRemoteData.user.fullName())")
       print("mockThreads: \(ATCRemoteData.threads)")
     vc.genericDataSource = dataSource

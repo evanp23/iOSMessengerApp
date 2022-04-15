@@ -19,32 +19,31 @@ class ATCRemoteData{
     static var channels: [ATCChatChannel] = []
     
     func getSelf(completion: @escaping () -> Void){
+        let uName = ConfigHelper.username
+        let docRef = db.collection("users").document(uName)
         
-        db.collection("self").getDocuments() { (querySnapshot, err) in
-            if let err = err {
-                print("Firebase returned an error while getting chat documents: \(err)")
-            } else {
-                if querySnapshot?.documents == nil{
-                    print("no channels or threads found for this user's organization\n. No worries a brand new one will automatically be created when you first attempt to send a message")
-                }else{
-                    var userInfo = querySnapshot!.documents[0]
-            
-                    let email:String  = userInfo.get("email") as! String
-                    let firstName:String = userInfo.get("firstName") as! String
-                    let isOnline:Bool = (userInfo.get("isOnline") != nil)
-                    let lastName:String = userInfo.get("lastName") as! String
-                    let picURL:String = userInfo.get("pictureURL") as! String
-                    let uid:String = userInfo.get("uid") as! String
-                    let username:String = userInfo.get("username") as! String
-                    
-                    ATCRemoteData.user = ATCUser(uid: uid, firstName: firstName, lastName: lastName, avatarURL: picURL, email: email, isOnline: isOnline)
-                    self.getChannels(completion: {
-                        print("getSelf sending completion")
-                        completion()
-                    })
-                }
+        
+        docRef.getDocument(completion: { (document, err) in
+            if let document = document, document.exists {
+                let email:String  = document.get("email") as! String
+                let firstName:String = document.get("firstName") as! String
+                let isOnline:Bool = (document.get("isOnline") != nil)
+                let lastName:String = document.get("lastName") as! String
+                let picURL:String = document.get("profilePictureURL") as! String
+                let uid:String = document.get("uid") as! String
+                let username:String = document.get("username") as! String
+                
+                ATCRemoteData.user = ATCUser(uid: uid, firstName: firstName, lastName: lastName, avatarURL: picURL, email: email, isOnline: isOnline)
+                
+                let friendsList: [String] = document.get("friends") as! [String]
+                
+                self.getFriends(friends: friendsList, completion: {
+                    print("getSelf sending completion")
+                    print("SELF: \(ATCRemoteData.user.fullName())")
+                    completion()
+                })
             }
-        }
+        })
     }
     
     func getChannels(completion: @escaping () -> Void){
@@ -58,73 +57,94 @@ class ATCRemoteData{
                 }else{
                     // Uncomment to see all documents in this user's org
                     // Usually a bad thing though, only use to debug and do not release
-                    self.getFriends(completion: {
-                        for document in querySnapshot!.documents {
-                            let channel = ATCChatChannel(document: document)
-                            ATCRemoteData.channels.append(channel!)
-                            //get threads
-                            print(document.get("id"))
-                            self.db.collection("channels/\(document.get("id")!)/thread").getDocuments() { (otherSnapshot, err) in
-                                if let err = err {
-                                    print("Firebase returned an error while getting chat documents: \(err)")
-                                } else {
-                                    if otherSnapshot?.documents == nil{
-                                        print("no channels or threads found for this user's organization\n. No worries a brand new one will automatically be created when you first attempt to send a message")
-                                    }else{
-                                        if(otherSnapshot!.isEmpty){
-                                        }
-                                        if(!otherSnapshot!.isEmpty){
-                                            let doc = otherSnapshot!.documents[0]
-                                            let thread: ATChatMessage = ATChatMessage(document: doc)!
-                                            ATCRemoteData.threads.append(thread)
-                                            
-                                            print(thread.sender)
-                                        }
-                                        completion()
+                    
+                    if(querySnapshot!.documents.isEmpty){print("sending completion");completion(); return}
+                    for document in querySnapshot!.documents {
+                        let channel = ATCChatChannel(document: document)
+                        ATCRemoteData.channels.append(channel!)
+                        //get threads
+                        print(document.get("id"))
+                        self.db.collection("channels/\(document.get("id")!)/thread").getDocuments() { (otherSnapshot, err) in
+                            if let err = err {
+                                print("Firebase returned an error while getting chat documents: \(err)")
+                            } else {
+                                if otherSnapshot?.documents == nil{
+                                    print("no channels or threads found for this user's organization\n. No worries a brand new one will automatically be created when you first attempt to send a message")
+                                }else{
+                                    if(otherSnapshot!.isEmpty){
                                     }
+                                    if(!otherSnapshot!.isEmpty){
+                                        let doc = otherSnapshot!.documents[0]
+                                        let thread: ATChatMessage = ATChatMessage(document: doc)!
+                                        ATCRemoteData.threads.append(thread)
+                                        
+                                        print(thread.sender)
+                                    }
+                                    completion()
                                 }
                             }
-                            
                         }
-                    })
+                        
+                    }
                     
                 }
             }
         }
     }
     
-    func getFriends(completion: @escaping () -> Void){
-        print("getting all friends")
-         db.collection("friends").getDocuments() { (querySnapshot, err) in
-            if let err = err {
-                print("Firebase returned an error while getting chat documents: \(err)")
-            } else {
-                if querySnapshot?.documents == nil{
-                    print("no channels or threads found for this user's organization\n. No worries a brand new one will automatically be created when you first attempt to send a message")
-                }else{
-//                     Uncomment to see all documents in this user's org
-//                     Usually a bad thing though, only use to debug and do not release
-                    for document in querySnapshot!.documents {
-                        let email:String  = document.get("email") as! String
-                        let firstName:String = document.get("firstName") as! String
-                        let isOnline:Bool = (document.get("isOnline") != nil)
-                        let lastName:String = document.get("lastName") as! String
-                        let picURL:String = document.get("pictureURL") as! String
-                        let uid:String = document.get("uid") as! String
-                        let username:String = document.get("username") as! String
-                        
-                        let friend = ATCUser(uid: uid, firstName: firstName, lastName: lastName, avatarURL: picURL, email: email, isOnline: isOnline)
-                        
-                        print("REMOTEDATA FRIEND: \(friend.fullName())")
-                        
-                        ATCRemoteData.friends.append(friend)
-                        //print("\(document.documentID) => \(document.data())")
-                    }
-                    print("getFriends Sending completion")
-                    completion()
+    func getFriends(friends: [String],completion: @escaping () -> Void){
+        for friend in friends {
+            let docRef = db.collection("users").document(friend)
+            docRef.getDocument(completion: { (document, err) in
+                if let document = document, document.exists {
+                    let email:String  = document.get("email") as! String
+                    let firstName:String = document.get("firstName") as! String
+                    let isOnline:Bool = (document.get("isOnline") != nil)
+                    let lastName:String = document.get("lastName") as! String
+                    let picURL:String = document.get("profilePictureURL") as! String
+                    let uid:String = document.get("uid") as! String
+                    let username:String = document.get("username") as! String
+                    
+                    let thisFriend = ATCUser(uid: uid, firstName: firstName, lastName: lastName, avatarURL: picURL, email: email, isOnline: isOnline)
+                    
+                    ATCRemoteData.friends.append(thisFriend)
+                    print("GOT FRIEND: \(thisFriend.fullName())")
+                    
+                    
+                    self.getChannels(completion: {
+                        completion()
+                    })
                 }
-            }
+            })
         }
+        
+//        print("getting all friends")
+//         db.collection("friends").getDocuments() { (querySnapshot, err) in
+//            if let err = err {
+//                print("Firebase returned an error while getting chat documents: \(err)")
+//            } else {
+//                if querySnapshot?.documents == nil{
+//                    print("no channels or threads found for this user's organization\n. No worries a brand new one will automatically be created when you first attempt to send a message")
+//                }else{
+////                     Uncomment to see all documents in this user's org
+////                     Usually a bad thing though, only use to debug and do not release
+//                    for document in querySnapshot!.documents {
+                        
+//
+                        
+//
+//                        print("REMOTEDATA FRIEND: \(friend.fullName())")
+//
+//                        ATCRemoteData.friends.append(friend)
+//                        //print("\(document.documentID) => \(document.data())")
+//                    }
+//                    print("getFriends Sending completion")
+//                    getChannels(completion: {
+//                        completion()
+//                    })
+//                }
+//            }
+//        }
     }
     
     /// Function ensures that all

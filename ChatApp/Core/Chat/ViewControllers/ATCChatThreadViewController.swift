@@ -70,7 +70,6 @@ class ATCChatThreadViewController: MessagesViewController, MessagesDataSource, I
     print("thread view controller did load")
     
     reference = db.collection(["channels", channel.id, "thread"].joined(separator: "/"))
-    print("reference.path for thread: \(reference?.path)")
     
     self.remoteData.checkPath(path: ["channels", channel.id, "thread"], dbRepresentation: channel.representation)
     

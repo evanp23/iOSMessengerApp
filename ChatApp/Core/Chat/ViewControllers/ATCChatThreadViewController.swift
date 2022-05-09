@@ -67,25 +67,31 @@ class ATCChatThreadViewController: MessagesViewController, MessagesDataSource, I
   
   override func viewDidLoad() {
     super.viewDidLoad()
-    print("thread view controller did load")
     
-    reference = db.collection(["channels", channel.id, "thread"].joined(separator: "/"))
     
-    self.remoteData.checkPath(path: ["channels", channel.id, "thread"], dbRepresentation: channel.representation)
+      self.remoteData.checkPath(path: ["channels", channel.id, "thread"], dbRepresentation: channel.representation, completion: {channelName in
+          
+          self.reference = self.db.collection(["channels", channelName, "thread"].joined(separator: "/"))
+            
+          self.messageListener = self.reference?.addSnapshotListener { querySnapshot, error in
+            guard let snapshot = querySnapshot else {
+              print("Error listening for channel updates: \(error?.localizedDescription ?? "No error")")
+              return
+            }
+            
+            snapshot.documentChanges.forEach { change in
+              self.handleDocumentChange(change)
+            }
+          }
+          
+          self.navigationItem.largeTitleDisplayMode = .never
+          self.title = self.channel.name
+          
+          return ""
+          
+      })
     
-    messageListener = reference?.addSnapshotListener { querySnapshot, error in
-      guard let snapshot = querySnapshot else {
-        print("Error listening for channel updates: \(error?.localizedDescription ?? "No error")")
-        return
-      }
-      
-      snapshot.documentChanges.forEach { change in
-        self.handleDocumentChange(change)
-      }
-    }
     
-    navigationItem.largeTitleDisplayMode = .never
-    self.title = channel.name
     
     maintainPositionOnKeyboardFrameChanged = true
     
@@ -149,12 +155,14 @@ class ATCChatThreadViewController: MessagesViewController, MessagesDataSource, I
   // MARK: - Helpers
   
   private func save(_ message: ATChatMessage) {
-    print("saving message: \(message.representation)")
     reference?.addDocument(data: message.representation) { error in
       if let e = error {
         print("Error sending message: \(e.localizedDescription)")
         return
       }
+        
+        let remote = ATCRemoteData()
+        remote.addChannelToUsers(channelID: self.channel.id, users: [message.atcSender, message.recipient])
       
       self.messagesCollectionView.scrollToBottom()
     }
@@ -164,7 +172,7 @@ class ATCChatThreadViewController: MessagesViewController, MessagesDataSource, I
     guard !messages.contains(message) else {
       return
     }
-    
+      
     messages.append(message)
     messages.sort() //why?
     
@@ -225,7 +233,6 @@ class ATCChatThreadViewController: MessagesViewController, MessagesDataSource, I
   }
   
   private func sendPhoto(_ image: UIImage) {
-    print("is sending photo")
     isSendingPhoto = true
     
     uploadImage(image, to: channel) { [weak self] url in
@@ -261,12 +268,12 @@ class ATCChatThreadViewController: MessagesViewController, MessagesDataSource, I
   }
   
   func currentSender() -> SenderType {
-    return Sender(id: user.initials, displayName: user.fullName())
+    return Sender(senderId: user.uid ?? "noid", displayName: user.fullName())
   }
   
   // MARK: - MessagesDataSource
   func currentSender() -> Sender {
-    return Sender(id: user.uid ?? "noid", displayName: "You")
+    return Sender(senderId: user.uid ?? "noid", displayName: "You")
   }
   
   func numberOfMessages(in messagesCollectionView: MessagesCollectionView) -> Int {
@@ -323,11 +330,13 @@ extension ATCChatThreadViewController: MessagesLayoutDelegate {
 // MAR: - MessageInputBarDelegate
 extension ATCChatThreadViewController {
   func inputBar(_ inputBar: InputBarAccessoryView, didPressSendButtonWith text: String) {
+      
+    
     let message = ATChatMessage(messageId: UUID().uuidString,
                                 messageKind: MessageKind.text(text),
                                 createdAt: Date(),
                                 atcSender: user,
-                                recipient: user,
+                                recipient: self.channel.otherUser,
                                 seenByRecipient: false)
     save(message)
     inputBar.inputTextView.text = ""
@@ -340,7 +349,7 @@ extension ATCChatThreadViewController: MessagesDisplayDelegate {
   
   func backgroundColor(for message: MessageType, at indexPath: IndexPath,
                        in messagesCollectionView: MessagesCollectionView) -> UIColor {
-    return isFromCurrentSender(message: message) ? UIColor(hexString: "#0084ff") : UIColor(hexString: "#f0f0f0")
+      return message.sender.senderId == ConfigHelper.username ? UIColor(hexString: "#0084ff") : UIColor(hexString: "#f0f0f0")
   }
   
   func shouldDisplayHeader(for message: MessageType, at indexPath: IndexPath,
@@ -351,7 +360,9 @@ extension ATCChatThreadViewController: MessagesDisplayDelegate {
   func messageStyle(for message: MessageType, at indexPath: IndexPath,
                     in messagesCollectionView: MessagesCollectionView) -> MessageStyle {
     
-    let corner: MessageStyle.TailCorner = isFromCurrentSender(message: message) ? .bottomRight : .bottomLeft
+      let corner: MessageStyle.TailCorner = message.sender.senderId == ConfigHelper.username ? .bottomRight : .bottomLeft
+      
+      
     return .bubbleTail(corner, .curved)
   }
   
@@ -371,7 +382,6 @@ extension ATCChatThreadViewController: UIImagePickerControllerDelegate, UINaviga
   
   func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
     picker.dismiss(animated: true, completion: nil)
-    print("picker did finish picking photo")
     
     if let asset = info["phAsset"] as? PHAsset {
       let size = CGSize(width: 500, height: 500)

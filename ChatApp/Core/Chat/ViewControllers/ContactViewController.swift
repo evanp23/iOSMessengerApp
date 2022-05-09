@@ -44,7 +44,14 @@ class ContactViewController : UIViewController{
         myButton.addTarget(self, action: #selector(messageButtonClicked), for: .touchUpInside)
         return myButton
     }()
-//        view.addSubview(contactImg)
+        
+        let addContactButton: UIButton = {
+            var addButton: UIButton = UIButton()
+            addButton.setImage(UIImage.localImage("three-equal-lines-icon", template: true), for: UIControl.State.normal)
+            addButton.addTarget(self, action: #selector(addButtonClicked), for: .touchUpInside)
+            return addButton
+            
+        }()
         
         
         
@@ -53,8 +60,20 @@ class ContactViewController : UIViewController{
         label.text = self.contact.fullName()
         let textPos = view.center.x
         
-        print("LABEL WIDTH: \(label.frame.width)")
-//        label.frame = CGRect(x: 0, y: 0, width: 250, height: 100)
+        
+        lazy var actionsStack: UIStackView = {
+            let stack = UIStackView()
+            stack.axis = .horizontal
+            
+            if(!contact.getIsFriend()){
+                [addContactButton].forEach { stack.addArrangedSubview($0) }
+            }
+            else{
+                [messageButton].forEach{ stack.addArrangedSubview($0)}
+            }
+            
+            return stack
+        }()
         
         lazy var stackView: UIStackView = {
             let stack = UIStackView()
@@ -62,12 +81,9 @@ class ContactViewController : UIViewController{
             stack.spacing = 20.0
             stack.alignment = .center
 //            stack.distribution = .fillEqually
-            [contactImg, label, messageButton].forEach { stack.addArrangedSubview($0) }
+            [contactImg, label, actionsStack].forEach { stack.addArrangedSubview($0) }
             return stack
         }()
-        
-
-    
         
         self.view.addSubview(stackView)
         stackView.snp.makeConstraints { (make) in
@@ -90,6 +106,12 @@ class ContactViewController : UIViewController{
         
     }
     
+    @objc func addButtonClicked(){
+        print("add \(contact.fullName())")
+        let remoteData = ATCRemoteData()
+        remoteData.addFriend(username: contact.uid!)
+    }
+    
     @objc func messageButtonClicked(){
         let viewer = ATCRemoteData.user
         
@@ -100,11 +122,21 @@ class ContactViewController : UIViewController{
               inputPlaceholderTextColor: UIColor(hexString: "#979797"))
 //        if let lastMessage = object as? ATChatMessage {
 //          let otherUser = viewer.uid == lastMessage.atcSender.uid ? lastMessage.recipient : lastMessage.atcSender
-          
         
-        let channel = ATCChatChannel(id: "\(contact.uid!):\(viewer.uid!)", name: contact.fullName())
-        let vc = ATCChatThreadViewController(user: viewer, channel: channel, uiConfig: uiConfig)
-        navigationController?.pushViewController(vc, animated: true)
+        var channel = ATCChatChannel(id: "\(contact.uid!):\(viewer.uid!)", name: contact.fullName(), otherUser: contact)
+        
+        let remoteData = ATCRemoteData()
+        remoteData.checkPath(path: ["channels", "\(contact.uid!):\(viewer.uid!)", "thread"], dbRepresentation: channel.representation, completion: {
+            channelName in
+            
+            channel = ATCChatChannel(id: channelName, name: self.contact.fullName(), otherUser: self.contact)
+            
+            let vc = ATCChatThreadViewController(user: viewer, channel: channel, uiConfig: uiConfig)
+            self.navigationController?.pushViewController(vc, animated: true)
+            
+            return ""
+            
+        })
         
     }
     

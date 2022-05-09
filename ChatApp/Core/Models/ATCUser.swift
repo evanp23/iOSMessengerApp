@@ -20,6 +20,8 @@ open class ATCUser: NSObject, ATCGenericBaseModel {
     var lastName: String?
     var profilePictureURL: String?
     var isOnline: Bool
+    var channels: [String:String]
+    var isFriend: Bool = false;
     
     public override init() {
         self.firstName = nil
@@ -28,15 +30,17 @@ open class ATCUser: NSObject, ATCGenericBaseModel {
         self.email = nil
         self.profilePictureURL = nil
         self.isOnline = false
+        self.channels = [:]
     }
 
-    public init(uid: String = "", firstName: String, lastName: String, avatarURL: String = "", email: String = "", isOnline: Bool = false) {
+    public init(uid: String = "", firstName: String, lastName: String, avatarURL: String = "", email: String = "", isOnline: Bool = false, channels: [String:String] = [:]) {
         self.firstName = firstName
         self.lastName = lastName
         self.uid = uid
         self.email = email
         self.profilePictureURL = avatarURL
         self.isOnline = isOnline
+        self.channels = channels
     }
     
 
@@ -62,5 +66,13 @@ open class ATCUser: NSObject, ATCGenericBaseModel {
             return String(f) + String(l)
         }
         return "?"
+    }
+    
+    func setFriend(isFriend: Bool){
+        self.isFriend = isFriend
+    }
+    
+    func getIsFriend() -> Bool{
+        return self.isFriend
     }
 }

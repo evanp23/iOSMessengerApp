@@ -30,8 +30,6 @@ class ContactsViewController : ATCGenericCollectionViewController{
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        print("hello")
     }
     
     static func contactSelectionBlock(uiConfig: ATCUIGenericConfigurationProtocol) -> ATCollectionViewSelectionBlock{
@@ -45,7 +43,6 @@ class ContactsViewController : ATCGenericCollectionViewController{
               let vc = ContactViewController(contact: contact)
               navController?.pushViewController(vc, animated: true)
               print("clicked: \(contact.fullName())")
-              print("ATCREMOTE: \(ATCRemoteData.threads)")
           }
         }
     }

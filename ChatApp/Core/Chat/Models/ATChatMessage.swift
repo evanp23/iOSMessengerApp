@@ -147,7 +147,7 @@ extension ATChatMessage: DatabaseRepresentation {
       "recipientID": recipient.uid ?? "",
       "recipientFirstName": recipient.firstName ?? "",
       "recipientLastName": recipient.lastName ?? "",
-      "recipientProfilePictureURL": atcSender.profilePictureURL ?? "",
+      "recipientProfilePictureURL": recipient.profilePictureURL ?? "",
     ]
     
     if let url = downloadURL {

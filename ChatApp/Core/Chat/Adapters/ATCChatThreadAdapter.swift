@@ -20,7 +20,11 @@ class ATCChatThreadAdapter: ATCGenericCollectionRowAdapter {
 
     func configure(cell: UICollectionViewCell, with object: ATCGenericBaseModel) {
         guard let viewModel = object as? ATChatMessage, let cell = cell as? ATCThreadCollectionViewCell else { return }
-        let theOtherUser = (viewer.email == viewModel.atcSender.email) ? viewModel.recipient : viewModel.atcSender
+        //print(viewModel.messageText)
+        
+        
+        let theOtherUser = (viewer.uid == viewModel.atcSender.uid) ? viewModel.recipient : viewModel.atcSender
+        
         if let url = theOtherUser.profilePictureURL {
             cell.singleImageView.kf.setImage(with: URL(string: url))
         } else {
@@ -30,12 +34,12 @@ class ATCChatThreadAdapter: ATCGenericCollectionRowAdapter {
         cell.singleImageView.clipsToBounds = true
         cell.singleImageView.layer.cornerRadius = 60.0/2.0
 
-        let unseenByMe = (!viewModel.seenByRecipient && viewer.email == viewModel.recipient.email)
+        let unseenByMe = (!viewModel.seenByRecipient && viewer.uid == viewModel.recipient.uid)
         cell.titleLabel.text = (theOtherUser.firstName ?? "") + " " +  (theOtherUser.lastName ?? "")
         cell.titleLabel.font = unseenByMe ? uiConfig.mediumBoldFont : uiConfig.regularMediumFont
         cell.titleLabel.textColor = uiConfig.mainTextColor
 
-        var subtitle = (viewer.email == viewModel.atcSender.email) ? "You: " : ""
+        var subtitle = (viewer.uid == viewModel.atcSender.uid) ? "You: " : ""
         subtitle += viewModel.messageText + " \u{00B7} " + TimeFormatHelper.chatString(for: viewModel.sentDate)
         cell.subtitleLabel.text = subtitle
         cell.subtitleLabel.font = uiConfig.regularSmallFont

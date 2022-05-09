@@ -11,24 +11,29 @@ import FirebaseFirestore
 struct ATCChatChannel {
     let id: String
     let name: String
-//    let participants: [ATCUser]
+    let otherUser: ATCUser
 
-    init(id: String, name: String) {
+    init(id: String, name: String, otherUser: ATCUser) {
         self.id = id
         self.name = name
-//        self.participants = usersExceptCurrent
+        self.otherUser = otherUser
     }
 
     init?(document: QueryDocumentSnapshot) {
-        let data = document.data()
-
-        guard let name = data["name"] as? String else {
-            return nil
-        }
-
         id = document.documentID
-        self.name = name
-//        self.participants = nil
+        let particArray = id.components(separatedBy: ":")
+        let remoteData = ATCRemoteData()
+        
+        if(particArray[0] == ConfigHelper.username){
+            let theOtherUser = remoteData.getATCFriendFromUname(username: particArray[1])
+            self.name = theOtherUser.fullName()
+            self.otherUser = theOtherUser
+        }
+        else{
+            let theOtherUser = remoteData.getATCFriendFromUname(username: particArray[1])
+            self.name = theOtherUser.fullName()
+            self.otherUser = theOtherUser
+        }
     }
 }
 

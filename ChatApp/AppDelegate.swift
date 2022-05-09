@@ -35,9 +35,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let remoteData = ATCRemoteData()
         
 
-        let threadsDataSource = ATCGenericLocalHeteroDataSource(items: ATCChatMockStore.threads)
+        //let threadsDataSource = ATCGenericLocalHeteroDataSource(items: ATCChatMockStore.threads)
         
-        print("threadDataSource: \(threadsDataSource)")
+        
         
 //        let initialData = ATCGenericFirebaseDataSource<<#T: ATCGenericBaseModel & ATCGenericFirebaseParsable#>>(tableName: "channels")
         
@@ -65,13 +65,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //                                                                 threadsDataSource: threadsDataSource,
 //                                                                 viewer: remoteData.user)
         
+        //AppDelegate calling getSelf() with completion handler.
         remoteData.getSelf(completion: {
-            print("appdelegate got completion")
-            print("APPDELEGATE: SELF: \(ATCRemoteData.user.firstName)")
-                        let newThreadsDataSource = ATCGenericLocalHeteroDataSource(items: ATCRemoteData.threads)
-            
+            //this code is run after getSelf() sends completion.
             self.window?.rootViewController = ChatHostViewController(uiConfig: config,
-                                                                threadsDataSource: newThreadsDataSource,
+                                                                threadsDataSource: ChatChannelDataStore(),
                                                                      viewer: ATCRemoteData.user)
         })
         

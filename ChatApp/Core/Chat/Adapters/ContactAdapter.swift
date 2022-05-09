@@ -34,11 +34,10 @@ class ContactAdapter: ATCGenericCollectionRowAdapter {
         cell.titleLabel.font = uiConfig.regularMediumFont
         cell.titleLabel.textColor = uiConfig.mainTextColor
 
-//        var subtitle = (viewer.email == viewModel.atcSender.email) ? "You: " : ""
-//        subtitle += viewModel.messageText + " \u{00B7} " + TimeFormatHelper.chatString(for: viewModel.sentDate)
-//        cell.subtitleLabel.text = subtitle
-//        cell.subtitleLabel.font = uiConfig.regularSmallFont
-//        cell.subtitleLabel.textColor = uiConfig.mainSubtextColor
+        var subtitle = theOtherUser.uid
+        cell.subtitleLabel.text = subtitle
+        cell.subtitleLabel.font = uiConfig.regularSmallFont
+        cell.subtitleLabel.textColor = uiConfig.mainSubtextColor
 
         cell.onlineStatusView.isHidden = !theOtherUser.isOnline
         cell.onlineStatusView.layer.cornerRadius = 15.0/2.0

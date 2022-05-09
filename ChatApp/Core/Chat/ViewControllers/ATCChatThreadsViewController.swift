@@ -7,8 +7,13 @@
 //
 
 import UIKit
+import Firebase
 
 class ATCChatThreadsViewController: ATCGenericCollectionViewController {
+    private var messageListener: ListenerRegistration?
+    private let db = Firestore.firestore()
+    private var reference: DocumentReference?
+    static var thisVC: ATCChatThreadsViewController?
   
   init(configuration: ATCGenericCollectionViewControllerConfiguration,
        selectionBlock: ATCollectionViewSelectionBlock?,
@@ -20,6 +25,13 @@ class ATCChatThreadsViewController: ATCGenericCollectionViewController {
   required init?(coder aDecoder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
   }
+    
+    override func viewDidLoad() {
+      super.viewDidLoad()
+        
+    }
+          
+          
   
   static func mockThreadsVC(uiConfig: ATCUIGenericConfigurationProtocol,
                             dataSource: ATCGenericCollectionViewControllerDataSource,
@@ -42,15 +54,14 @@ class ATCChatThreadsViewController: ATCGenericCollectionViewController {
       
     let vc = ATCChatThreadsViewController(configuration: collectionVCConfiguration, selectionBlock: ATCChatThreadsViewController.selectionBlock(viewer: viewer), viewer: viewer)
       
-      print("mockThreads: \(viewer.fullName())")
-      print("mockThreads: \(ATCRemoteData.user.fullName())")
-      print("mockThreads: \(ATCRemoteData.threads)")
-    vc.genericDataSource = dataSource
+      self.thisVC = vc
+      vc.genericDataSource = dataSource
     return vc
   }
   
   static func selectionBlock(viewer: ATCUser) -> ATCollectionViewSelectionBlock? {
     return { (navController, object) in
+        print("OBJECT: \(object)")
       let uiConfig = ATCChatUIConfiguration(primaryColor: UIColor(hexString: "#0084ff"),
             secondaryColor: UIColor(hexString: "#f0f0f0"),
             inputTextViewBgColor: UIColor(hexString: "#f4f4f6"),
@@ -58,7 +69,15 @@ class ATCChatThreadsViewController: ATCGenericCollectionViewController {
             inputPlaceholderTextColor: UIColor(hexString: "#979797"))
       if let lastMessage = object as? ATChatMessage {
         let otherUser = viewer.uid == lastMessage.atcSender.uid ? lastMessage.recipient : lastMessage.atcSender
-        let vc = ATCChatThreadViewController(user: viewer, channel: ATCChatChannel(id: lastMessage.channelId, name: otherUser.fullName()), uiConfig: uiConfig)
+          var gottenChannelID: String = ""
+          
+          for channelID in ATCRemoteData.channelIds{
+              if(channelID.contains(otherUser.uid!)){
+                  gottenChannelID = channelID
+              }
+          }
+          
+          let vc = ATCChatThreadViewController(user: ATCRemoteData.user, channel: ATCChatChannel(id: gottenChannelID, name: otherUser.fullName(), otherUser: otherUser), uiConfig: uiConfig)
         navController?.pushViewController(vc, animated: true)
       }
     }

@@ -7,8 +7,13 @@
 //
 
 import UIKit
+import Firebase
 
 class ATCChatHomeViewController: ATCGenericCollectionViewController {
+    private var messageListener: ListenerRegistration?
+    private let db = Firestore.firestore()
+    private var reference: DocumentReference?
+    
   
   init(configuration: ATCGenericCollectionViewControllerConfiguration,
        selectionBlock: ATCollectionViewSelectionBlock?,
@@ -24,6 +29,10 @@ class ATCChatHomeViewController: ATCGenericCollectionViewController {
   required init?(coder aDecoder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
   }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+    }
   
   static func homeVC(uiConfig: ATCUIGenericConfigurationProtocol,
                      threadsDataSource: ATCGenericCollectionViewControllerDataSource,
@@ -40,6 +49,8 @@ class ATCChatHomeViewController: ATCGenericCollectionViewController {
       scrollEnabled: true,
       uiConfig: uiConfig
     )
+      
+    
       
       
     
@@ -61,14 +72,52 @@ class ATCChatHomeViewController: ATCGenericCollectionViewController {
     storiesCarousel.parentViewController = homeVC
     
     // Configure list of message threads
-//      let dataSource = ATCGenericLocalDataSource(items: ATCRemoteData.threads)
+      
+      var threadsVC = ATCChatThreadsViewController(configuration: collectionVCConfiguration, selectionBlock: ATCChatThreadsViewController.selectionBlock(viewer: viewer), viewer: viewer)
+      
+//      var threadsVC = ATCChatThreadsViewController.mockThreadsVC(uiConfig: uiConfig, dataSource: threadsDataSource, viewer: viewer)
+      
+      threadsVC.genericDataSource = threadsDataSource
+//      threadsVC.genericDataSource?.loadFirst()
       
       
-      print("THREADS: \(threadsDataSource)")
+      //NEW THREAD LISTENER
       
-      let threadsVC = ATCChatThreadsViewController.mockThreadsVC(uiConfig: uiConfig, dataSource: ATCGenericLocalDataSource(items: ATCRemoteData.threads), viewer: viewer)
+      let remoteData = ATCRemoteData()
+      let thisDb = remoteData.db
       
-      print("made threads vc")
+      let thisReference: DocumentReference? = thisDb.collection("users").document(ConfigHelper.username)
+      
+    let thisListener = thisReference?.addSnapshotListener { querySnapshot, error in
+      guard let document = querySnapshot else {
+        print("Error listening for channel updates: \(error?.localizedDescription ?? "No error")")
+        return
+      }
+        guard let data = document.data() else{
+            print("Document data was empty")
+            return
+        }
+        let channels = document.get("channels") as! [String]
+        
+        let remoteData = ATCRemoteData()
+        
+        for channel in channels {
+            print("CHannel : \(channel)")
+            
+            let splitChannelId = channel.components(separatedBy: ":")
+            let otherUser : ATCUser = splitChannelId[0] == ConfigHelper.username ? remoteData.getATCFriendFromUname(username: splitChannelId[1]) : remoteData.getATCFriendFromUname(username: splitChannelId[0])
+            
+            let newChannel = ATCChatChannel(id: channel, name: otherUser.fullName(), otherUser: otherUser)
+            if(!ATCRemoteData.channels.contains(newChannel)){
+                ATCRemoteData.channels.append(newChannel)
+            }
+            
+//            threadsVC.genericDataSource?.loadFirst()
+        }
+        threadsVC.collectionView.reloadData()
+        print("Thread count: \(threadsVC.genericDataSource?.numberOfObjects())")
+    }
+      
       
       
       let threadsViewModel = ATCViewControllerContainerViewModel(viewController: threadsVC, cellHeight: nil, subcellHeight: 85)
@@ -77,6 +126,7 @@ class ATCChatHomeViewController: ATCGenericCollectionViewController {
     
     // Finish home VC configuration
     homeVC.genericDataSource = ATCGenericLocalHeteroDataSource(items: [storiesCarousel, threadsViewModel])
+      
       
     return homeVC
   }
@@ -102,6 +152,8 @@ class ATCChatHomeViewController: ATCGenericCollectionViewController {
     let vc = ATCGenericCollectionViewController(configuration: configuration, selectionBlock: ATCChatHomeViewController.storySelectionBlock(viewer: viewer))
     vc.genericDataSource = dataSource
     vc.use(adapter: ATCChatUserStoryAdapter(uiConfig: uiConfig), for: "ATCUser")
+      
+      
     return vc
   }
   
@@ -117,7 +169,7 @@ class ATCChatHomeViewController: ATCGenericCollectionViewController {
         let id2 = (viewer.uid ?? "")
         let channelId = "\(id1):\(id2)"
         print("loading thread for channelID: \(channelId)")
-        let vc = ATCChatThreadViewController(user: viewer, channel: ATCChatChannel(id: channelId, name: user.fullName()), uiConfig: uiConfig)
+          let vc = ATCChatThreadViewController(user: viewer, channel: ATCChatChannel(id: channelId, name: user.fullName(), otherUser: user), uiConfig: uiConfig)
         navController?.pushViewController(vc, animated: true)
       }
     }
